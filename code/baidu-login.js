@@ -7,12 +7,15 @@ const config = {
 
 async function baiduLogin(name, password) {
     if (!name || !password) return '用户名或密码为空';
-    
+
     let DRIVER = require('selenium-webdriver'),
+
         profile = DRIVER.Capabilities.chrome(),
         builder = new DRIVER.Builder().withCapabilities(profile),
         browser = builder.build(),
         By = DRIVER.By;
+
+        
 
     profile.set('browserName', 'chrome');
     await browser.get(config.baiduUrl);
@@ -46,7 +49,7 @@ async function baiduLogin(name, password) {
     await browser.sleep(config.intervalTime * 2);
 
     let cookies = '登录失败';
-    if (isLogSuccess(browser)) {
+    if (await isLogSuccess(browser)) {
         cookies = await browser.manage().getCookies();
     }
 
