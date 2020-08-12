@@ -7,20 +7,17 @@ const config = {
 
 async function baiduLogin(name, password) {
     if (!name || !password) return '用户名或密码为空';
-    let DRIVER = require('selenium-webdriver');
-    let profile = DRIVER.Capabilities.chrome();
+    
+    let DRIVER = require('selenium-webdriver'),
+        profile = DRIVER.Capabilities.chrome(),
+        builder = new DRIVER.Builder().withCapabilities(profile),
+        browser = builder.build(),
+        By = DRIVER.By;
+
     profile.set('browserName', 'chrome');
-    let builder = new DRIVER.Builder().withCapabilities(profile);
-    let browser = builder.build();
-
-    let By = DRIVER.By;
-
     await browser.get(config.baiduUrl);
-
     await browser.executeScript(`document.getElementById('u1').getElementsByTagName('a')[1].click();`); // 点击登录
-
     await browser.wait(DRIVER.until.elementLocated(By.id('TANGRAM__PSP_11__footerULoginBtn')), 2000); // 点击账号密码登录
-
     await browser.sleep(config.intervalTime);
     browser.manage().window().maximize(); // 窗口最大行
     await browser.sleep(config.intervalTime);
@@ -44,15 +41,11 @@ async function baiduLogin(name, password) {
     }
 
     await browser.sleep(config.intervalTime);
-
     // 提交表单
     browser.findElement(By.id('TANGRAM__PSP_11__submit')).click();
-
     await browser.sleep(config.intervalTime * 2);
 
-
     let cookies = '登录失败';
-
     if (isLogSuccess(browser)) {
         cookies = await browser.manage().getCookies();
     }
